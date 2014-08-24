@@ -1,0 +1,17 @@
+{
+    "contents" : "## In and Out sampling error\n```{r}\nconfusionMatrix(fTraining$classe,predict(modelFitGbm,fTraining))\nconfusionMatrix(fTesting$classe,predict(modelFitGbm,fTesting))\n```\n",
+    "created" : 1408898121495.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "141788656",
+    "id" : "AE5B916B",
+    "lastKnownWriteTime" : 1408922477,
+    "path" : "~/Coursera/predmachlearn/Assigment_01/Draft.R",
+    "project_path" : "Draft.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

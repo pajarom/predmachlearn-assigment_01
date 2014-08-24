@@ -1,0 +1,17 @@
+{
+    "contents" : "---\ntitle: \"Machine Learning Assigment\"\nauthor: \"Pablo Rojo\"\ndate: \"24 de agosto de 2014\"\noutput:\n  html_document:\n    keep_md: yes\n---\n\n#Introduction\nIn this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: [http://groupware.les.inf.puc-rio.br/har](http://groupware.les.inf.puc-rio.br/har) (see the section on the Weight Lifting Exercise Dataset). \n\n#Data Exploration and Cleaning\nFirst we load the data provided for training:\n```{r}\ndata <- read.csv(\"pml-training.csv\")\n```\n\nSince cross validation will be used, the data is split in training and testing sets:\n```{r}\nlibrary(caret)\nset.seed(2235)\ninTrain <- createDataPartition( y=data$classe,\n                                p=0.75, list=FALSE)\ntraining <- data[inTrain,]\ntesting <- data[-inTrain,]\n```\n\nA first look at the data using:\n\n```{r, eval=FALSE}\nsummary(training)\n```\n\nshow:\n\n- 160 variables\n- Multiple columns have mostly NA.\n- The first 7 variables are not numeric.\n\n##Select Predictors\nFirst, non numeric variables need to be removed:\n```{r}\nnonPredictor <- 1:7\nfTraining <- training[, -nonPredictor]\nfTesting  <- testing[, -nonPredictor]\n```\n\n##Remove Columns with NA\nColumns with NA are also eliminated:\n\n```{r}\nisNAColumn <- apply( fTraining , 2 , function(x) any(is.na(x)) )\n\nfTraining <- fTraining[, !isNAColumn]\nfTesting  <- fTesting[, !isNAColumn]\n```\n\n##Near Zero Variables\nIn order to improve the model, near zero variables are deleted from the data set as well:\n\n```{r}\nnzv <- nearZeroVar(fTraining)\nfTraining <- fTraining[, -nzv]\nfTesting <- fTesting[, -nzv]\n```\n\n##Identifying Correlated Predictors\nFinally, highly correlated variables are also removed:\n\n```{r}\nhighlyCor <- findCorrelation(cor(fTraining[,-ncol(fTraining)]), cutoff = 0.75)\nfTraining <- fTraining[, -highlyCor]\nfTesting <- fTesting[, -highlyCor]\n```\n\n##Final Training set\nThe resulting data set has now 41 variables:\n\n```{r}\nsummary(fTraining)\n```\n\n#Model Creation\nThis is a classification problem. Generalized Boosted Regression Model is proposed as a method: \n\n```{r, eval=FALSE}\nmodelFitGbm <- train( classe ~.,\n                      data=fTraining,\n                      method=\"gbm\",\n                      verbose=FALSE)\n```\n```{r, echo=FALSE}\nload(\"modelFitGbm.RData\")\nplot(modelFitGbm)\n```\n\n## In and Out sampling error\nIn order to analyse the error in the model, confusion matrices are generated for Training and Testing data set:\n\n```{r}\nconfusionMatrix(fTraining$classe,predict(modelFitGbm,fTraining))\nconfusionMatrix(fTesting$classe,predict(modelFitGbm,fTesting))\n```\n\n",
+    "created" : 1408920211232.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "4134688190",
+    "id" : "6DD81D6B",
+    "lastKnownWriteTime" : 1408923442,
+    "path" : "~/Coursera/predmachlearn/Assigment_01/Assigment.Rmd",
+    "project_path" : "Assigment.Rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_markdown"
+}
